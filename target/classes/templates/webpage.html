@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8">
+<title>Index</title>
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+	integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+	crossorigin="anonymous">
+	    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPlX3zjWuwzEpQUntr6Et1mHDOTwNc-PY&callback=initMap" async defer></script>
+    <style>
+    
+        body {
+            background-color: #ffccff; 
+            color:  #262626; 
+        }
+
+        /Styles of navigation/
+        .navbar {
+            background-color:  #262626; 
+            color: #ffccff;
+        }
+
+        .navbar a {
+            color: #ffccff; 
+        }
+
+        /* Especific styles for the page */
+        table {
+            background-color:  #262626; 
+            color: #ffccff; 
+        }
+
+       
+        th {
+            background-color:  #262626; 
+            color: #ffccff; 
+        }
+        
+   
+       
+        #weatherForm {
+            background-color:  #262626; 
+            color: #000000;
+            padding: 10px; 
+        }
+
+        #weatherForm label {
+            color: #ffccff; 
+        }
+
+      h1 {
+        color: #0d0d0d;
+        font-family: 'Arial Black', sans-serif;
+        font-style: italic;
+        color: #262626;
+        font-size: 4em;
+      text-shadow: 4px 5px 2px #b3b3b3;
+       margin-top: 70px;
+    }
+    
+    h4 {
+      color: #262626; /* Color del texto */
+    font-size: 2.5em; /* Tamaño del texto */
+     margin-top: 90px;
+    
+   }
+    
+      #weatherForm button {
+        background-color: #262626;
+        color: #ffccff;
+    }
+
+       .myparagraph {
+    /* Styles forr #welcomeMessage */
+    color: #262626; 
+    font-size: 1.5em; 
+    
+}
+     * {box-sizing: border-box}
+body {font-family: Verdana, sans-serif; margin:0}
+.mySlides {display: none}
+img {vertical-align: middle;}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .prev, .next,.text {font-size: 11px}
+}
+
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+    
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+</head>
+<body>
+    
+
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 53.345648, lng: -6.262073 },
+                zoom: 15
+            });
+
+            var marker = new google.maps.Marker({
+                position: { lat: 53.345648, lng: -6.262073 },
+                map: map,
+                title: 'Temple Bar'
+            });
+
+            // add information to marker_________________________________________________________________________
+            var infowindow = new google.maps.InfoWindow({
+                content: '<h3>Temple Bar</h3><p>Great spot to practice rock n roll or a fun frontside.</p><img src="templebar.jpg" alt="Temple Bar" style="max-width:350px;">'
+            });
+
+            // Show information of the marker
+            marker.addListener('click', function () {
+                infowindow.open(map, marker);
+            });
+            
+              // second marker (Skate Spot 1)__________________________________________________________________________________
+            var marker2 = new google.maps.Marker({
+                position: { lat: 53.343735, lng: -6.266031 },
+                map: map,
+                title: 'Dublin Castle'
+            });
+
+            var infowindow2 = new google.maps.InfoWindow({
+                content: '<h3>Dublin Castle</h3><p>This Bench material is ideal for performing slides like a Noselide or Tailslide.</p><img src="/skatespot1.jpg" alt="Skate Spot 1" style="max-width:350px;">'
+            });
+
+            marker2.addListener('click', function () {
+                infowindow2.open(map, marker2);
+            });
+			
+			// Third marker_____________________________________________________________________________
+			 var marker3 = new google.maps.Marker({
+                position: { lat: 53.349579986947674, lng: -6.23645693179852 },
+                map: map,
+                title: 'Skate Spot 3' 
+            });
+
+            var infowindow3 = new google.maps.InfoWindow({
+                content: '<h3>North Dock B</h3><p>This spot is a little more challenging, do you feel capable of doing a drop into the bench?</p><img src="/skate1.jpg" alt="Skate Spot 3" style="max-width:350px;">'
+            });
+
+            marker3.addListener('click', function () {
+                infowindow3.open(map, marker3);
+            });
+			
+			 //  fourth marker_____________________________________________________________________________
+           var marker4 = new google.maps.Marker({
+                position: { lat: 53.348107, lng: -6.237564 },
+                map: map,
+                title: 'Skate Spot 4'
+            });
+            var infowindow4 = new google.maps.InfoWindow({
+                content: '<h3>North North B</h3><p>Ideal spot to practice slides, just be careful with the security that they will be lurking around.</p><img src="/sk2.jpg" alt="Skate Spot 4" style="max-width:350px;">'
+            });
+
+            marker4.addListener('click', function () {
+                infowindow4.open(map, marker4);
+            });
+			
+			 //  five marker_____________________________________________________________________________
+            var marker5 = new google.maps.Marker({
+                position: { lat: 53.347471, lng: -6.238416 },
+                map: map,
+                title: 'Skate Spot 5'
+            });
+           var infowindow5 = new google.maps.InfoWindow({
+                content: '<h3>PwC Ireland</h3><p>I love this place to practice my ollies, a kickflip maybe?</p><img src="/sk3.jpg" alt="Skate Spot5" style="max-width:350px;">'
+            });
+
+            marker5.addListener('click', function () {
+                infowindow5.open(map, marker5);
+            });
+
+
+//  six marker_____________________________________________________________________________
+var marker6 = new google.maps.Marker({
+    position: { lat: 53.344450, lng:  -6.240032 },
+    map: map,
+    title: 'Skate Spot 6'
+});
+var infowindow6 = new google.maps.InfoWindow({
+    content: '<h3>WhatsApp Ireland Limited</h3><p>Do you need a good skating photo? voluminous and fun spot</p><img src="/sk6.jpg" alt="Skate Spot 6" style="max-width:350px;">'
+});
+
+marker6.addListener('click', function () {
+    infowindow6.open(map, marker6);
+});
+
+//  seven marker_____________________________________________________________________________
+var marker7 = new google.maps.Marker({
+    position: { lat: 53.344070, lng: -6.238937 },
+    map: map,
+    title: 'Skate Spot 7'
+});
+var infowindow7 = new google.maps.InfoWindow({
+    content: '<h3>Grand Canal Dock</h3><p>Here you will not only find more skaters, also a great atmosphere.</p><img src="/sk7.jpg" alt="Skate Spot 7" style="max-width:350px;">'
+});
+
+marker7.addListener('click', function () {
+    infowindow7.open(map, marker7);
+});
+
+//  eight marker_____________________________________________________________________________
+var marker8 = new google.maps.Marker({
+    position: { lat: 53.344397, lng: -6.236944 },
+    map: map,
+    title: 'Skate Spot 8'
+});
+var infowindow8 = new google.maps.InfoWindow({
+    content: '<h3>Grand Canal Dock</h3><p>This sport seems built for skating, ideal for your best land tricks.</p><img src="/sk8.jpg" alt="Skate Spot 8" style="max-width:350px;">'
+});
+
+marker8.addListener('click', function () {
+    infowindow8.open(map, marker8);
+});
+
+//  nine marker_____________________________________________________________________________
+var marker9 = new google.maps.Marker({
+    position: { lat: 53.345965,  lng: -6.238448 },
+    map: map,
+    title: 'Skate Spot 9'
+});
+var infowindow9 = new google.maps.InfoWindow({
+    content: '<h3>----</h3><p>....................</p><img src="/sk9.jpg" alt="Skate Spot 9" style="max-width:350px;">'
+});
+
+marker9.addListener('click', function () {
+    infowindow9.open(map, marker9);
+});
+
+//  ten markerr_____________________________________________________________________________
+var marker10 = new google.maps.Marker({
+    position: { lat: 53.345965, lng: -6.238447 },
+    map: map,
+    title: 'Skate Spot 10'
+});
+var infowindow10 = new google.maps.InfoWindow({
+    content: '<h3>South Dock</h3><p>Something challenging, do you think you are capable or are we still looking?</p><img src="/sk10.jpg" alt="Skate Spot 10" style="max-width:350px;">'
+});
+
+marker10.addListener('click', function () {
+    infowindow10.open(map, marker10);
+});
+
+//  eleven marekr_____________________________________________________________________________
+var marker11 = new google.maps.Marker({
+    position: { lat: 53.347513, lng:  -6.252776 },
+    map: map,
+    title: 'Skate Spot 11'
+});
+var infowindow11 = new google.maps.InfoWindow({
+    content: '<h3>St Marks</h3><p>This is where you have to take out your highest ollies that you have saved.</p><img src="/sk11.jpg" alt="Skate Spot 11" style="max-width:350px;">'
+});
+
+marker11.addListener('click', function () {
+    infowindow11.open(map, marker11);
+});
+
+//  twelve markerr_____________________________________________________________________________
+var marker12 = new google.maps.Marker({
+    position: { lat: 53.348709, lng: -6.249454 },
+    map: map,
+    title: 'Skate Spot 12'
+});
+var infowindow12 = new google.maps.InfoWindow({
+    content: '<h3>Epic Museum</h3><p>This curved bench is from another planet, so perfect that it is difficult to skate it.</p><img src="/sk12.jpg" alt="Skate Spot 12" style="max-width:350px;">'
+});
+
+marker12.addListener('click', function () {
+    infowindow12.open(map, marker12);
+});
+
+//  thirteen marker_____________________________________________________________________________
+var marker13 = new google.maps.Marker({
+    position: { lat: 53.348952, lng: -6.243703 },
+    map: map,
+    title: 'Skate Spot 13'
+});
+var infowindow13 = new google.maps.InfoWindow({
+    content: '<h3>NCI</h3><p>Spot outside the university. You will need to practice before because there are girls around you.</p><img src="/sk13.jpg" alt="Skate Spot 13" style="max-width:350px;">'
+});
+
+marker13.addListener('click', function () {
+    infowindow13.open(map, marker13);
+});
+
+//  fourteen marker_____________________________________________________________________________
+var marker14 = new google.maps.Marker({
+    position: { lat: 53.34799595162341,  lng: -6.2416248958132945 },
+    map: map,
+    title: 'Skate Spot 14'
+});
+var infowindow14 = new google.maps.InfoWindow({
+    content: '<h3>North Dock C</h3><p>Here I see an interesting trick line culminating with a great ollie, frontside perhaps?</p><img src="/sk14.jpg" alt="Skate Spot 14" style="max-width:350px;">'
+});
+
+marker14.addListener('click', function () {
+    infowindow14.open(map, marker14);
+});
+
+//  fiveteen marker_____________________________________________________________________________
+var marker15 = new google.maps.Marker({
+    position: { lat: 53.347710, lng: -6.240391 },
+    map: map,
+    title: 'Skate Spot 15'
+});
+var infowindow15 = new google.maps.InfoWindow({
+    content: '<h3>The Convention Centre</h3><p>Of the favorite places in Dublin, what more could you ask for?</p><img src="/sk15.jpg" alt="Skate Spot 15" style="max-width:350px;">'
+});
+
+marker15.addListener('click', function () {
+    infowindow15.open(map, marker15);
+});
+
+//  sixteen marker_____________________________________________________________________________
+var marker16 = new google.maps.Marker({
+    position: { lat: 53.350977, lng:  -6.234121 },
+    map: map,
+    title: 'Skate Spot 16'
+});
+var infowindow16 = new google.maps.InfoWindow({
+    content: '<h3>East Wall</h3><p>This place is ideal to try a good downhill.</p><img src="/sk16.jpg" alt="Skate Spot 16" style="max-width:350px;">'
+});
+
+marker16.addListener('click', function () {
+    infowindow16.open(map, marker16);
+});
+
+//  seventeen marekr_____________________________________________________________________________
+var marker17 = new google.maps.Marker({
+    position: { lat: 53.362679, lng: -6.235561 },
+    map: map,
+    title: 'Skate Spot 17'
+});
+var infowindow17 = new google.maps.InfoWindow({
+    content: '<h3>Fairview Park</h3><p>In this skatepark you will find everything, from rails to half pipes.</p><img src="/sk17.jpg" alt="Skate Spot 17" style="max-width:350px;">'
+});
+
+marker17.addListener('click', function () {
+    infowindow17.open(map, marker17);
+});
+
+  //  eihteen marker_____________________________________________________________________________
+            var marker18 = new google.maps.Marker({
+                position: { lat: 53.346111, lng: -6.240265 },
+                map: map,
+                title: 'Skate Spot 18'
+            });
+           var infowindow18 = new google.maps.InfoWindow({
+                content: '<h3>South Dock</h3><p>One of the best steps I have seen, try to try your best but tricks always land.</p><img src="/sk4.jpg" alt="Skate Spot19" style="max-width:350px;">'
+            });
+
+            marker18.addListener('click', function () {
+                infowindow18.open(map, marker18);
+            });
+
+
+
+  //  nineteen marker_____________________________________________________________________________
+            var marker19 = new google.maps.Marker({
+                position: { lat: 53.34577315782609, lng: -6.240356938385556 },
+                map: map,
+                title: 'Skate Spot 19'
+            });
+           var infowindow19 = new google.maps.InfoWindow({
+                content: '<h3>North Dock C</h3><p>A high level rail, you can grind your tricks that never fail.</p><img src="/sk5.jpg" alt="Skate Spot19" style="max-width:350px;">'
+            });
+
+            marker19.addListener('click', function () {
+                infowindow19.open(map, marker19);
+            });
+
+
+
+        
+        }
+    </script>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" th:href="@{/}">Register and
+					log in</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">
+						Log out</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<br>
+	<br>
+
+	<div class="container">
+		<h1>Skate Spotting</h1>
+		<br>
+		<h4>
+			Welcome back <span sec:authentication="principal.username"></span>
+		</h4>
+		
+		<p class="myparagraph"> This is a website for skaters that encapsulates not only the parks,
+		 but all the skating spots that are out there and undiscovered. 
+		 Here you’ll find the location of your nearest spot. Where other skaters
+		  will be able to locate the spot, suggest new spots making them able to access
+		   it in the future, creating a community that promotes this sport on its own.
+		    This way you will have access to information about lost spots and other to be
+		     discovered where the space to skate does not end where the skatepark ends but
+		      rather your curiosity. 
+		</p>
+		
+		
+	<div class="slideshow-container">
+  <div class="mySlides fade">
+    <div class="numbertext">1 / 8</div>
+    <img src="/skatespot4.jpg"  alt="SkateSpot" style="width:100%">
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext">2 / 8</div>
+    <img src="/skatespot9.jpg" alt="SkateSpot" style="width:100%">
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext">3 / 8</div>
+    <img src="/skatespot2.avif" alt="SkateSpot" style="width:100%">
+  </div> 
+  <div class="mySlides fade">
+    <div class="numbertext">4 / 8</div>
+    <img src="/skatespot3.avif" alt="SkateSpot" style="width:100%">
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext">5 / 8</div>
+    <img src="/skatespot5.avif" alt="SkateSpot" style="width:100%">
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext">6 / 8</div>
+    <img src="/skatespot6.avif" alt="SkateSpot" style="width:100%">
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext">7 / 8</div>
+    <img src="/skatespot7.avif" alt="SkateSpot" style="width:100%">
+  </div>
+  <div class="mySlides fade">
+    <div class="numbertext">8 / 8</div>
+    <img src="/skatespot8.jpg!d" alt="SkateSpot" style="width:100%">
+  </div>
+
+  <!-- Controles de navegación -->
+  <a class="prev" onclick="plusSlides(-1)">❮</a>
+  <a class="next" onclick="plusSlides(1)">❯</a>		
+</div>
+		
+		<br>
+
+<div style="text-align:center">
+  <span class="dot" onclick="currentSlide(1)"></span> 
+  <span class="dot" onclick="currentSlide(2)"></span> 
+  <span class="dot" onclick="currentSlide(3)"></span> 
+</div>
+
+<script>
+var slideIndex = 1;
+showSlides(slideIndex);
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+var slideInterval = setInterval(function () {
+  plusSlides(1);
+}, 2000); 
+
+document.querySelector('.slideshow-container').addEventListener('mouseenter', function () {
+  clearInterval(slideInterval);
+  slideInterval = setInterval(function () {
+    plusSlides(1);
+  }, 1000); 
+});
+
+document.querySelector('.slideshow-container').addEventListener('mouseleave', function () {
+  clearInterval(slideInterval);
+  slideInterval = setInterval(function () {
+    plusSlides(1);
+  }, 2000);  
+});
+
+function showSlides(n) {
+  let i;
+  let slides = document.getElementsByClassName("mySlides");
+  let dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " active";
+}
+</script>
+
+
+		
+
+		<br> <br>
+	
+
+
+    <h2>Are you planning to go somewhere? Check how's the weather now.</h2>
+
+    <form id="weatherForm">
+        <label for="city">Enter city:</label>
+        <input type="text" id="city" name="city" required>
+        <button type="button" onclick="getWeather()">Get Weather</button>
+    </form>
+
+    <div id="weatherData"></div>
+    
+    <div id="map"></div>
+ 
+    <script>
+        function getWeather() {
+            var city = document.getElementById("city").value;
+
+            $.get("/getWeather?city=" + city, function (data) {
+                // Parse the JSON response
+                var weatherData = JSON.parse(data);
+                
+                 var temperatureCelsius = (weatherData.main.temp - 273.15).toFixed(2);
+
+            // Display relevant weather information on the page
+            var weatherHtml = "<p>Temperature: " + temperatureCelsius + "°C</p>";
+            weatherHtml += "<p>Weather: " + weatherData.weather[0].description + "</p>";
+
+                $("#weatherData").html(weatherHtml);
+            });
+        }
+    </script>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3QHhtKf9Np0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KnjVjCdwC4Q" frameborder="0" allowfullscreen></iframe>
+	
+	
+  <p style="font-size: 30px;">Discover the best skate shops in Dublin:</p>
+<a href="https://www.heydublin.ie/best-skate-shops-dublin" target="_blank" style="font-size: 14px;">Click here to see the list!</a>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+		crossorigin="anonymous"></script>
+		 <div id="map_div" style="width: 800px; height: 700px"></div>
+</body>
+</html>
